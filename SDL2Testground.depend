@@ -937,3 +937,51 @@
 1415990043 c:\users\jesus\dropbox\clases unitec\programacion 3\projects\sdl2_testground\npc3.h
 	"Personaje.h"
 
+1417198389 source:c:\users\jesus\dropbox\clases unitec\programacion 3\projects\examenlab1\main.cpp
+	<iostream>
+	<fstream>
+	<SDL.h>
+	<SDL_image.h>
+	<iostream>
+	"PersonajeJugador.h"
+	"NPC.h"
+	"NPC2.h"
+	"NPC3.h"
+	<list>
+	<stdlib.h>
+	<map>
+	<vector>
+
+1417761579 c:\users\jesus\dropbox\clases unitec\programacion 3\projects\examenlab1\personajejugador.h
+	"Personaje.h"
+
+1415985311 c:\users\jesus\dropbox\clases unitec\programacion 3\projects\examenlab1\personaje.h
+	<SDL.h>
+	<SDL_image.h>
+	<iostream>
+	<list>
+
+1415958797 c:\users\jesus\dropbox\clases unitec\programacion 3\projects\examenlab1\npc.h
+	"Personaje.h"
+
+1415969451 c:\users\jesus\dropbox\clases unitec\programacion 3\projects\examenlab1\npc2.h
+	"Personaje.h"
+
+1415990043 c:\users\jesus\dropbox\clases unitec\programacion 3\projects\examenlab1\npc3.h
+	"Personaje.h"
+
+1415987822 source:c:\users\jesus\dropbox\clases unitec\programacion 3\projects\examenlab1\npc.cpp
+	"NPC.h"
+
+1415986196 source:c:\users\jesus\dropbox\clases unitec\programacion 3\projects\examenlab1\npc2.cpp
+	"NPC2.h"
+
+1415990043 source:c:\users\jesus\dropbox\clases unitec\programacion 3\projects\examenlab1\npc3.cpp
+	"NPC3.h"
+
+1415958472 source:c:\users\jesus\dropbox\clases unitec\programacion 3\projects\examenlab1\personaje.cpp
+	"Personaje.h"
+
+1417764794 source:c:\users\jesus\dropbox\clases unitec\programacion 3\projects\examenlab1\personajejugador.cpp
+	"PersonajeJugador.h"
+
