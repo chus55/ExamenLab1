@@ -27,10 +27,25 @@ PersonajeJugador::PersonajeJugador(int x, int y,SDL_Renderer* renderer,list<Pers
     ataque_izquierda.push_back(IMG_LoadTexture(renderer, "assets/personajes/ataque4.png"));
 
     orientacion="down";
+    rayo_orientacion = orientacion;
+    rayo2_orientacion = orientacion;
     estado = "pasivo";
     player = true;
     vivo = true;
     vida=50;
+    rayo_texture = IMG_LoadTexture(renderer, "assets/ataques/rayo.png");
+    rayo2_texture = IMG_LoadTexture(renderer, "assets/ataques/rayo2.png");
+    SDL_QueryTexture(rayo_texture,NULL,NULL, &this->rayo_rect.w, &this->rayo_rect.h);
+    SDL_QueryTexture(rayo2_texture,NULL,NULL, &this->rayo2_rect.w, &this->rayo2_rect.h);
+    rayo_rect.x = 0;
+    rayo_rect.y = 0;
+    rayo2_rect.x = 0;
+    rayo2_rect.y = 0;
+    rayo_activado=false;
+    rayo2_activado=false;
+
+    rayo_cooldown = 100;
+    rayo_frame_actual = 0;
 
     textura_actual = texturas_down.begin();
 }
@@ -64,8 +79,125 @@ void PersonajeJugador::logic(Uint8* currentKeyStates)
             textura_actual=texturas_left.begin();
             estado = "pasivo";
         }
+    if(rayo_activado)
+    {
 
-    if( currentKeyStates[ SDL_SCANCODE_UP ] )
+        if(rayo_orientacion=="up")
+        {
+            rayo_rect.y -= 4;
+        }
+        if(rayo_orientacion=="down")
+        {
+            rayo_rect.y += 4;
+        }
+        if(rayo_orientacion=="left")
+        {
+            rayo_rect.x -= 4;
+        }
+        if(rayo_orientacion=="right")
+        {
+            rayo_rect.x += 4;
+        }
+    }
+
+    if( currentKeyStates[ SDL_SCANCODE_SPACE] )
+    {
+        estado = "ataque";
+        if(orientacion=="up")
+        {
+            textura_actual=ataque_arriba.begin();
+        }
+        if(orientacion=="down")
+        {
+            textura_actual=ataque_abajo.begin();
+        }
+        if(orientacion=="left")
+        {
+            textura_actual=ataque_izquierda.begin();
+        }
+        if(orientacion=="right")
+        {
+            textura_actual=ataque_derecha.begin();
+        }
+    }
+
+    if( currentKeyStates[ SDL_SCANCODE_W] && rayo2_activado)
+        {
+            rayo2_rect.y -= 2;
+        }
+        if( currentKeyStates[ SDL_SCANCODE_S] && rayo2_activado)
+        {
+            rayo2_rect.y += 2;
+        }
+        if( currentKeyStates[ SDL_SCANCODE_A] && rayo2_activado)
+        {
+            rayo2_rect.x -= 2;
+        }
+        if( currentKeyStates[ SDL_SCANCODE_D] && rayo2_activado)
+        {
+            rayo2_rect.x += 2;
+        }
+
+    if(rayo_activado || rayo2_activado)
+        rayo_frame_actual++;
+    if(rayo_frame_actual>=rayo_cooldown)
+    {
+        rayo_activado = false;
+        rayo2_activado = false;
+    }
+
+    if( currentKeyStates[ SDL_SCANCODE_Q] && !rayo_activado && !rayo2_activado)
+    {
+        rayo_orientacion = orientacion;
+        rayo_activado=true;
+        rayo_frame_actual = 0;
+        rayo_rect.x = rectangulo.x;
+        rayo_rect.y = rectangulo.y;
+        estado = "ataque";
+        if(orientacion=="up")
+        {
+            rayo_rect.y-=rectangulo.h;
+        }
+        if(orientacion=="down")
+        {
+            rayo_rect.y+=rectangulo.h;
+        }
+        if(orientacion=="left")
+        {
+            rayo_rect.x-=rectangulo.w;
+        }
+        if(orientacion=="right")
+        {
+            rayo_rect.x+=rectangulo.w;
+        }
+
+    }else if( currentKeyStates[ SDL_SCANCODE_E] && !rayo2_activado && !rayo_activado)
+    {
+        rayo2_orientacion = orientacion;
+        rayo2_activado=true;
+        rayo_frame_actual = 0;
+        rayo2_rect.x = rectangulo.x;
+        rayo2_rect.y = rectangulo.y;
+        if(orientacion=="up")
+        {
+            rayo2_rect.y-=rectangulo.h;
+        }
+        if(orientacion=="down")
+        {
+            rayo2_rect.y+=rectangulo.h;
+        }
+        if(orientacion=="left")
+        {
+            rayo2_rect.x-=rectangulo.w;
+        }
+        if(orientacion=="right")
+        {
+            rayo2_rect.x+=rectangulo.w;
+        }
+
+    }else
+    {
+        if( currentKeyStates[ SDL_SCANCODE_UP ] )
     {
         rectangulo.y-=1;
         if(orientacion!="up")
@@ -93,25 +225,6 @@ void PersonajeJugador::logic(Uint8* currentKeyStates)
             textura_actual=texturas_left.begin();
         orientacion="left";
     }
-    if( currentKeyStates[ SDL_SCANCODE_SPACE] )
-    {
-        estado = "ataque";
-        if(orientacion=="up")
-        {
-            textura_actual=ataque_arriba.begin();
-        }
-        if(orientacion=="down")
-        {
-            textura_actual=ataque_abajo.begin();
-        }
-        if(orientacion=="left")
-        {
-            textura_actual=ataque_izquierda.begin();
-        }
-        if(orientacion=="right")
-        {
-            textura_actual=ataque_derecha.begin();
-        }
     }
 
     for(list<Personaje*>::iterator i = personajes->begin();i!=personajes->end();i++)
@@ -126,11 +239,27 @@ void PersonajeJugador::logic(Uint8* currentKeyStates)
             {
                 vivo = false;
             }
-        if(colision(this->rectangulo, (*i)->rectangulo) && estado=="ataque")
+        if((colision(this->rayo_rect, (*i)->rectangulo) && rayo_activado) || (colision(this->rectangulo, (*i)->rectangulo) && estado=="ataque") || (colision(this->rayo2_rect, (*i)->rectangulo) && rayo2_activado))
         {
             //rectangulo=temp;
             personajes->erase(i);
+            rayo_activado=false;
+            rayo2_activado=false;
             break;
         }
+    }
+}
+
+void PersonajeJugador::render(SDL_Renderer* renderer)
+{
+    Personaje::render(renderer);
+    if(rayo_activado)
+    {
+        cout<<rayo_rect.y<<endl;
+        SDL_RenderCopy(renderer, rayo_texture, NULL, &rayo_rect);
+    }
+    if(rayo2_activado)
+    {
+        SDL_RenderCopy(renderer, rayo2_texture, NULL, &rayo2_rect);
     }
 }
